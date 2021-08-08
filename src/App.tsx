@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled, Theme } from '@material-ui/core/styles';
-
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import MenuBar from './components/MenuBar/MenuBar';
 import MobileTopMenuBar from './components/MobileTopMenuBar/MobileTopMenuBar';
 import PreJoinScreens from './components/PreJoinScreens/PreJoinScreens';
@@ -27,6 +27,18 @@ const Main = styled('main')(({ theme }: { theme: Theme }) => ({
   },
 }));
 
+const AfterJoinScreen = () => {
+  return (
+    <Main>
+      <ReconnectingNotification />
+      <RecordingNotifications />
+      <MobileTopMenuBar />
+      <Room />
+      <MenuBar />
+    </Main>
+  );
+};
+
 export default function App() {
   const roomState = useRoomState();
 
@@ -39,17 +51,15 @@ export default function App() {
 
   return (
     <Container style={{ height }}>
-      {roomState === 'disconnected' ? (
-        <PreJoinScreens />
-      ) : (
-        <Main>
-          <ReconnectingNotification />
-          <RecordingNotifications />
-          <MobileTopMenuBar />
-          <Room />
-          <MenuBar />
-        </Main>
-      )}
+      <Router>
+        <Switch>
+          <Route exact path="/" component={PreJoinScreens} />
+          <Route path="/room" component={AfterJoinScreen} />
+          <Route path="/room/" component={PageTwo} />
+        </Switch>
+      </Router>
+
+      {/* {roomState === 'disconnected' ? <PreJoinScreens /> : <AfterJoinScreen />} */}
     </Container>
   );
 }
