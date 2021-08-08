@@ -11,6 +11,8 @@ import Room from './components/Room/Room';
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
 
+import HomeView from './components/Home/Home';
+
 const Container = styled('div')({
   display: 'grid',
   gridTemplateRows: '1fr auto',
