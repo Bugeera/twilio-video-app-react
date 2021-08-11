@@ -9,6 +9,7 @@ import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton
 import { useAppState } from '../../../state';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { withRouter } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
@@ -72,6 +73,21 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     });
   };
 
+  const JoiningButton = withRouter(({ history }) => (
+    <Button
+      variant="contained"
+      color="primary"
+      data-cy-join-now
+      onClick={() => {
+        handleJoin();
+        // history.push(`/room/${roomName}`);
+      }}
+      disabled={disableButtons}
+    >
+      Join Now
+    </Button>
+  ));
+
   if (isFetching || isConnecting) {
     return (
       <Grid container justify="center" alignItems="center" direction="column" style={{ height: '100%' }}>
@@ -118,7 +134,8 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
               <Button variant="outlined" color="primary" onClick={() => setStep(Steps.roomNameStep)}>
                 Cancel
               </Button>
-              <Button
+              <JoiningButton />
+              {/* <Button
                 variant="contained"
                 color="primary"
                 data-cy-join-now
@@ -126,7 +143,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
                 disabled={disableButtons}
               >
                 Join Now
-              </Button>
+              </Button> */}
             </div>
           </Grid>
         </Grid>

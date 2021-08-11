@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ParticipantList() {
+export default function ParticipantList(props: { isTourEnabled: boolean }) {
   const classes = useStyles();
   const { room } = useVideoContext();
   const localParticipant = room!.localParticipant;
@@ -61,19 +61,22 @@ export default function ParticipantList() {
     >
       <div className={classes.scrollContainer}>
         <div className={classes.innerScrollContainer}>
-          <Participant participant={localParticipant} isLocalParticipant={true} />
+          <Participant isTourEnabled={props.isTourEnabled} participant={localParticipant} isLocalParticipant={true} />
           {participants.map(participant => {
             const isSelected = participant === selectedParticipant;
             const hideParticipant =
               participant === mainParticipant && participant !== screenShareParticipant && !isSelected;
             return (
-              <Participant
-                key={participant.sid}
-                participant={participant}
-                isSelected={participant === selectedParticipant}
-                onClick={() => setSelectedParticipant(participant)}
-                hideParticipant={hideParticipant}
-              />
+              <>
+                <Participant
+                  isTourEnabled={props.isTourEnabled}
+                  key={participant.sid}
+                  participant={participant}
+                  isSelected={participant === selectedParticipant}
+                  onClick={() => setSelectedParticipant(participant)}
+                  hideParticipant={hideParticipant}
+                />
+              </>
             );
           })}
         </div>

@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function MobileTopMenuBar() {
+export default function MobileTopMenuBar(props: { toggleTourState: any }) {
   const classes = useStyles();
   const { room } = useVideoContext();
 
@@ -38,7 +38,7 @@ export default function MobileTopMenuBar() {
     <Grid container alignItems="center" justify="space-between" className={classes.container}>
       <Typography variant="subtitle1">{room!.name}</Typography>
       <div>
-        <EndCallButton className={classes.endCallButton} />
+        <EndCallButton toggleTourState={props.toggleTourState} className={classes.endCallButton} />
         <Menu buttonClassName={classes.settingsButton} />
       </div>
     </Grid>

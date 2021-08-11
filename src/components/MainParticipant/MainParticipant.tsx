@@ -6,7 +6,7 @@ import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useS
 import useScreenShareParticipant from '../../hooks/useScreenShareParticipant/useScreenShareParticipant';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
-export default function MainParticipant() {
+export default function MainParticipant(props: any) {
   const mainParticipant = useMainParticipant();
   const { room } = useVideoContext();
   const localParticipant = room!.localParticipant;
@@ -24,6 +24,7 @@ export default function MainParticipant() {
        is already being rendered in the <ParticipantStrip /> component.  */
     <MainParticipantInfo participant={mainParticipant}>
       <ParticipantTracks
+        isTourEnabled={props.isTourEnabled}
         participant={mainParticipant}
         videoOnly
         enableScreenShare={mainParticipant !== localParticipant}

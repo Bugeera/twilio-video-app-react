@@ -18,12 +18,19 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function EndCallButton(props: { className?: string }) {
+export default function EndCallButton(props: { className?: string; toggleTourState: any }) {
   const classes = useStyles();
   const { room } = useVideoContext();
 
   return (
-    <Button onClick={() => room!.disconnect()} className={clsx(classes.button, props.className)} data-cy-disconnect>
+    <Button
+      onClick={() => {
+        props.toggleTourState(false);
+        room!.disconnect();
+      }}
+      className={clsx(classes.button, props.className)}
+      data-cy-disconnect
+    >
       Disconnect
     </Button>
   );

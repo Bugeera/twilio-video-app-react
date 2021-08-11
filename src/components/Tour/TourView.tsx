@@ -14,14 +14,14 @@ import { useAppState } from '../../state';
 
 import { iframeStack, IframeElement } from './TourProvider';
 
-interface TourViewProps {}
+interface TourViewProps {
+  styleItems: any;
+}
 
 function TourView(props: TourViewProps) {
-  const [tourCount, setTourCount] = useState(5);
   const { roomType } = useAppState();
-  setTourCount(iframeStack.length);
   return (
-    <div>
+    <div style={props.styleItems}>
       <IframeElement iframe={iframeStack[0]} />
     </div>
   );

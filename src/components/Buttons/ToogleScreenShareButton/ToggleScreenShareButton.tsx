@@ -26,7 +26,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
+export default function ToggleScreenShareButton(props: {
+  disabled?: boolean;
+  isTourEnabled?: boolean;
+  toggleTourState?: any;
+}) {
   const classes = useStyles();
   const screenShareParticipant = useScreenShareParticipant();
   const { toggleScreenShare } = useVideoContext();
@@ -54,17 +58,25 @@ export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
       <span>
         {/* The span element is needed because a disabled button will not emit hover events and we want to display
           a tooltip when screen sharing is disabled */}
-        <a href="/3dtour" target="_blank">
-          <Button
-            className={classes.button}
-            onClick={toggleScreenShare}
-            disabled={isDisabled}
-            startIcon={<ScreenShareIcon />}
-            data-cy-share-screen
-          >
-            {SCREEN_SHARE_TEXT}
-          </Button>
-        </a>
+        {/* <a
+          href="/3dtour"
+          target="_blank"
+          className={classes.button}
+          data-cy-share-screen
+        > */}
+        <Button
+          className={classes.button}
+          onClick={() => {
+            // window.history.pushState({}, '', '/3dtour');
+            props.toggleTourState(true);
+            toggleScreenShare();
+          }}
+          disabled={isDisabled}
+          startIcon={<ScreenShareIcon />}
+          data-cy-share-screen
+        >
+          {SCREEN_SHARE_TEXT}
+        </Button>
       </span>
     </Tooltip>
   );
