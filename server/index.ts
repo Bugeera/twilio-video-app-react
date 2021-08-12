@@ -3,7 +3,14 @@ import { createExpressHandler } from './createExpressHandler';
 import express, { RequestHandler } from 'express';
 import path from 'path';
 import { ServerlessFunction } from './types';
+import https from 'https';
+import http from 'http';
+import fs from 'fs';
 
+const options = {
+    key: fs.readFileSync(path.resolve('./server/certs/3d.key')),
+    cert: fs.readFileSync(path.resolve('./server/certs/3d.crt'))
+};
 const PORT = process.env.PORT ?? 8081;
 
 const app = express();
@@ -43,4 +50,15 @@ app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, '../build/index.html'));
 });
 
-app.listen(PORT, () => console.log(`twilio-video-app-react server running on ${PORT}`));
+// app.listen(PORT, () => console.log(`twilio-video-app-react server running on ${PORT}`));
+
+const httpsServer = https.createServer(options, app).listen(PORT, ()=> {
+  console.log("Express server is listening on port: " + PORT);
+});
+const httpServer = http.createServer({}, (req:any, res:any) => {
+  app.locals.hi = '';
+  res.writeHead(301, { "Location": `https://${(req.headers || {}).host.split(':')[0]}:${PORT}` + req.url });
+  res.end();
+}).listen(8080);
+
+module.exports = { httpsServer, httpServer, app };
