@@ -26,14 +26,13 @@ const useStyles = makeStyles((theme: Theme) => {
   };
 });
 
-export default function Room(props: { isTourEnabled: boolean }) {
+export default function Room() {
   const classes = useStyles();
   const { isChatWindowOpen } = useChatContext();
-  console.log('Room props', props);
   return (
     <div className={clsx(classes.container, { [classes.chatWindowOpen]: isChatWindowOpen })}>
-      <MainParticipant isTourEnabled={props.isTourEnabled} />
-      <ParticipantList isTourEnabled={props.isTourEnabled} />
+      <MainParticipant />
+      <ParticipantList />
       <ChatWindow />
     </div>
   );

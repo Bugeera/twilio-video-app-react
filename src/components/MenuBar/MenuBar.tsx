@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function MenuBar(props: { isTourEnabled?: boolean; toggleTourState?: any }) {
+export default function MenuBar() {
   const classes = useStyles();
   const { isSharingScreen, toggleScreenShare } = useVideoContext();
   const roomState = useRoomState();
@@ -74,14 +74,7 @@ export default function MenuBar(props: { isTourEnabled?: boolean; toggleTourStat
       {isSharingScreen && (
         <Grid container justify="center" alignItems="center" className={classes.screenShareBanner}>
           <Typography variant="h6">You are sharing your screen</Typography>
-          <Button
-            onClick={() => {
-              props.toggleTourState(false);
-              toggleScreenShare();
-            }}
-          >
-            Stop Sharing
-          </Button>
+          <Button onClick={() => toggleScreenShare()}>Stop Sharing</Button>
         </Grid>
       )}
       <footer className={classes.container}>
@@ -95,13 +88,7 @@ export default function MenuBar(props: { isTourEnabled?: boolean; toggleTourStat
             <Grid container justify="center">
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
-              {!isSharingScreen && !isMobile && (
-                <ToggleScreenShareButton
-                  isTourEnabled={props.isTourEnabled}
-                  toggleTourState={props.toggleTourState}
-                  disabled={isReconnecting}
-                />
-              )}
+              {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
             </Grid>
           </Grid>
@@ -109,7 +96,7 @@ export default function MenuBar(props: { isTourEnabled?: boolean; toggleTourStat
             <Grid style={{ flex: 1 }}>
               <Grid container justify="flex-end">
                 <Menu />
-                <EndCallButton toggleTourState={props.toggleTourState} />
+                <EndCallButton />
               </Grid>
             </Grid>
           </Hidden>

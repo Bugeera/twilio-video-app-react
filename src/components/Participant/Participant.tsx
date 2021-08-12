@@ -4,7 +4,6 @@ import ParticipantTracks from '../ParticipantTracks/ParticipantTracks';
 import { Participant as IParticipant } from 'twilio-video';
 
 interface ParticipantProps {
-  isTourEnabled: boolean;
   participant: IParticipant;
   videoOnly?: boolean;
   enableScreenShare?: boolean;
@@ -15,7 +14,6 @@ interface ParticipantProps {
 }
 
 export default function Participant({
-  isTourEnabled,
   participant,
   videoOnly,
   enableScreenShare,
@@ -33,7 +31,6 @@ export default function Participant({
       hideParticipant={hideParticipant}
     >
       <ParticipantTracks
-        isTourEnabled={isTourEnabled}
         participant={participant}
         videoOnly={videoOnly}
         enableScreenShare={enableScreenShare}

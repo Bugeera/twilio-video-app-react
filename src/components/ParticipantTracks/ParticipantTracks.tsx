@@ -4,7 +4,6 @@ import Publication from '../Publication/Publication';
 import usePublications from '../../hooks/usePublications/usePublications';
 
 interface ParticipantTracksProps {
-  isTourEnabled: boolean;
   participant: Participant;
   videoOnly?: boolean;
   enableScreenShare?: boolean;
@@ -21,7 +20,6 @@ interface ParticipantTracksProps {
  */
 
 export default function ParticipantTracks({
-  isTourEnabled,
   participant,
   videoOnly,
   enableScreenShare,
@@ -42,7 +40,6 @@ export default function ParticipantTracks({
     <>
       {filteredPublications.map(publication => (
         <Publication
-          isTourEnabled={isTourEnabled}
           key={publication.kind}
           publication={publication}
           participant={participant}
