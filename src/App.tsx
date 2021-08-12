@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { styled, Theme } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import MenuBar from './components/MenuBar/MenuBar';
@@ -12,7 +12,6 @@ import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
 
 import HomeView from './components/Home/Home';
-import TourView from './components/Tour/TourView';
 
 const Container = styled('div')({
   display: 'grid',
@@ -28,28 +27,21 @@ const Main = styled('main')(({ theme }: { theme: Theme }) => ({
   },
 }));
 
-// const AfterJoinScreen = () => {
-//   const roomState = useRoomState();
-//   return (
-//     <>
-//       {roomState != 'disconnected' ? (
-//         <Main>
-//           <ReconnectingNotification />
-//           <RecordingNotifications />
-//           <MobileTopMenuBar />
-//           <Room isTourEnabled={isTourEnabled} />
-//           <MenuBar />
-//         </Main>
-//       ) : (
-//         <div>No Connection</div>
-//       )}
-//     </>
-//   );
-// };
+const AfterJoinScreen = () => {
+  return (
+    <Main>
+      <ReconnectingNotification />
+      <RecordingNotifications />
+      <MobileTopMenuBar />
+      <Room />
+      <MenuBar />
+    </Main>
+  );
+};
 
 export default function App() {
   const roomState = useRoomState();
-  const [isTourEnabled, setIsTourEnabled] = useState(false);
+
   // Here we would like the height of the main container to be the height of the viewport.
   // On some mobile browsers, 'height: 100vh' sets the height equal to that of the screen,
   // not the viewport. This looks bad when the mobile browsers location bar is open.
@@ -57,41 +49,17 @@ export default function App() {
   // will look good on mobile browsers even after the location bar opens or closes.
   const height = useHeight();
 
-  const toggleTourState = (val: boolean) => {
-    setIsTourEnabled(val);
-  };
-
   return (
     <Container style={{ height }}>
-      {roomState === 'disconnected' ? (
-        <PreJoinScreens />
-      ) : (
-        <Main>
-          <ReconnectingNotification />
-          <RecordingNotifications />
-          <MobileTopMenuBar toggleTourState={toggleTourState} />
-          <Room isTourEnabled={isTourEnabled} />
-          <MenuBar isTourEnabled={isTourEnabled} toggleTourState={toggleTourState} />
-        </Main>
-      )}
+      <Router>
+        <Switch>
+          <Route exact path="/" component={PreJoinScreens} />
+          <Route path="/room" component={AfterJoinScreen} />
+          <Route path="/room/" component={PageTwo} />
+        </Switch>
+      </Router>
+
+      {/* {roomState === 'disconnected' ? <PreJoinScreens /> : <AfterJoinScreen />} */}
     </Container>
   );
 }
-
-/* <Router>
-        <Switch>
-          <Route exact path="/" component={PreJoinScreens} />
-          <Route path="/room/:roomNameParam">
-            (
-            <Main>
-              <ReconnectingNotification />
-              <RecordingNotifications />
-              <MobileTopMenuBar />
-              <Room />
-              <MenuBar />
-            </Main>
-            )
-          </Route>
-          <Route path="/3dtour" component={TourView} />
-        </Switch>
-      </Router> */
