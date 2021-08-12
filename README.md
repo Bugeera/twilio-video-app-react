@@ -254,4 +254,3 @@ See [.env.example](.env.example) for an explanation of the environment variables
 ## License
 
 See the [LICENSE](LICENSE) file for details.
-pm2 start ecosystem.config.js --env production --only NodeServer
