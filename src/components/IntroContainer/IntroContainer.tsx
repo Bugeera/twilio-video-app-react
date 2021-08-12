@@ -100,7 +100,7 @@ const IntroContainer = (props: IntroContainerProps) => {
 
   return (
     <div className={classes.background}>
-      {/* <TwilioLogo className={classes.twilioLogo} /> */}
+      <TwilioLogo className={classes.twilioLogo} />
       {user && location.pathname !== '/login' && <UserMenu />}
       <div className={classes.container}>
         <div className={classes.innerContainer}>
@@ -108,7 +108,7 @@ const IntroContainer = (props: IntroContainerProps) => {
             <div className={classes.logoContainer}>
               <VideoLogo />
               <Typography variant="h6" className={classes.title}>
-                Online Video Conference
+                Twilio Programmable Video
               </Typography>
             </div>
           </div>
