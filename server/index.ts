@@ -42,6 +42,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+app.use('/.well-known', express.static(path.join(__dirname, './.well-known')));
 app.use(express.static(path.join(__dirname, '../build')));
 
 app.get('*', (_, res) => {
