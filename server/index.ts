@@ -11,7 +11,7 @@ const options = {
     key: fs.readFileSync(path.resolve('./server/certs/3d.key')),
     cert: fs.readFileSync(path.resolve('./server/certs/3d.crt'))
 };
-const PORT = process.env.PORT ?? 8081;
+const PORT = process.env.PORT ?? 443;
 
 const app = express();
 app.use(express.json());
@@ -60,6 +60,6 @@ const httpServer = http.createServer({}, (req:any, res:any) => {
   app.locals.hi = '';
   res.writeHead(301, { "Location": `https://${(req.headers || {}).host.split(':')[0]}:${PORT}` + req.url });
   res.end();
-}).listen(8080);
+}).listen(80);
 
 module.exports = { httpsServer, httpServer, app };
