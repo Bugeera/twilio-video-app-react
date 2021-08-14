@@ -8,8 +8,8 @@ import http from 'http';
 import fs from 'fs';
 
 const options = {
-    key: fs.readFileSync(path.resolve('./server/certs/3d.key')),
-    cert: fs.readFileSync(path.resolve('./server/certs/3d.crt'))
+  key: fs.readFileSync(path.resolve('/etc/letsencrypt/live/video.3dinsights.com.au/privkey.pem')),
+  cert: fs.readFileSync(path.resolve('/etc/letsencrypt/live/video.3dinsights.com.au/fullchain.pem'))
 };
 const PORT = process.env.PORT ?? 443;
 
@@ -53,10 +53,10 @@ app.get('*', (_, res) => {
 
 // app.listen(PORT, () => console.log(`twilio-video-app-react server running on ${PORT}`));
 
-const httpsServer = https.createServer(options, app).listen(PORT, ()=> {
+const httpsServer = https.createServer(options, app).listen(PORT, () => {
   console.log("Express server is listening on port: " + PORT);
 });
-const httpServer = http.createServer({}, (req:any, res:any) => {
+const httpServer = http.createServer({}, (req: any, res: any) => {
   app.locals.hi = '';
   res.writeHead(301, { "Location": `https://${(req.headers || {}).host.split(':')[0]}:${PORT}` + req.url });
   res.end();
