@@ -13,6 +13,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const { jwt: { AccessToken } } = require('twilio');
+const ejwt = require('express-jwt');
 
 const VideoGrant = AccessToken.VideoGrant;
 
@@ -33,6 +34,7 @@ const app = express();
   // 'networkquality',
   // 'reconnection',
   'screenshare',
+  'tour',
   // 'localmediacontrols',
   // 'remotereconnection',
   // 'datatracks',
@@ -43,12 +45,16 @@ const app = express();
   app.use(`/${example}`, express.static(examplePath));
 });
 
-const tourPath = path.join(__dirname, `../examples/tourview/public`);
-app.use(`/tour`, express.static(tourPath));
+// const tourPath = path.join(__dirname, `../examples/tourview/public`);
+// app.use(`/tour`, express.static(tourPath));
 
 // // Set up the path for the quickstart.
-// const quickstartPath = path.join(__dirname, '../quickstart/public');
-// app.use('/quickstart', express.static(quickstartPath));
+const quickstartPath = path.join(__dirname, '../quickstart/public');
+app.use('/quickstart', express.static(quickstartPath));
+app.all('/meeting', ejwt({ secret: '!n|)I^', algorithms: ['HS256'], requestProperty: 'secKey' }), (req, res) => {
+  if (!req.secKey) return res.sendStatus(404);
+  next();
+}, express.static(quickstartPath));
 
 // Set up the path for the examples page.
 const examplesPath = path.join(__dirname, '../examples');
@@ -61,12 +67,16 @@ app.get('/', (request, response) => {
   response.redirect('/tour');
 });
 
+const middleware = (req, res, next) => {
+
+}
+
 /**
  * Generate an Access Token for a chat application user - it generates a random
  * username for the client requesting a token, and takes a device ID as a query
  * parameter.
  */
-app.get('/token', function(request, response) {
+app.get('/token', function (request, response) {
   const { identity } = request.query;
 
   // Create an access token which we will sign and return to the client,
@@ -92,6 +102,6 @@ app.get('/token', function(request, response) {
 // Create http server and run it.
 const server = http.createServer(app);
 const port = process.env.PORT || 3000;
-server.listen(port, function() {
+server.listen(port, function () {
   console.log('Express server running on *:' + port);
 });

@@ -7,10 +7,12 @@
     "build": "npm-run-all build:*",
     "build:examples": "npm-run-all build:examples:*",
     "build:examples:screenshare": "copyfiles -f examples/screenshare/src/helpers.js examples/screenshare/public && browserify examples/screenshare/src/index.js > examples/screenshare/public/index.js",
+    "build:examples:tour": "copyfiles -f examples/tour/src/helpers.js examples/tour/public && browserify examples/tour/src/index.js > examples/tour/public/index.js",
     "build:quickstart": "browserify quickstart/src/index.js > quickstart/public/index.js",
     "clean": "npm-run-all clean:*",
     "clean:examples": "npm-run-all clean:examples:*",
     "clean:examples:screenshare": "rimraf examples/screenshare/public/index.js examples/screenshare/public/helpers.js",
+    "clean:examples:tour": "rimraf examples/tour/public/index.js examples/tour/public/helpers.js",
     "clean:quickstart": "rimraf quickstart/public/index.js",
     "start": "npm run clean && npm run build && node server"
   },
@@ -36,7 +38,9 @@
   "dependencies": {
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
+    "express-jwt": "6.1.0",
     "jslint": "^0.12.1",
+    "jsonwebtoken": "8.5.1",
     "prismjs": "^1.6.0",
     "stackblur-canvas": "^1.4.0",
     "twilio": "^3.19.1",

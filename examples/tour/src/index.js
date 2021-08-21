@@ -8,10 +8,12 @@ const helpers = require('./helpers');
 const createScreenTrack = helpers.createScreenTrack;
 const captureScreen = document.querySelector('button#capturescreen');
 const screenPreview = document.querySelector('video#screenpreview');
-const stopScreenCapture = document.querySelector('button#stopscreencapture');
+// const stopScreenCapture = document.querySelector('button#stopscreencapture');
 const remoteScreenPreview = document.querySelector('video.remote-screenpreview');
+const jwt = require('jsonwebtoken');
 
-(async function() {
+
+(async function () {
   // // Load the code snippet.
   // const snippet = await getSnippet('./helpers.js');
   // const pre = document.querySelector('pre.language-javascript');
@@ -34,30 +36,43 @@ const remoteScreenPreview = document.querySelector('video.remote-screenpreview')
   });
 
   // Hide the "Stop Capture Screen" button.
-  stopScreenCapture.style.display = 'none';
+  // stopScreenCapture.style.display = 'none';
 
   // The LocalVideoTrack for your screen.
   let screenTrack;
 
-  captureScreen.onclick = async function() {
+  captureScreen.onclick = async function () {
     try {
-      // Create and preview your local screen.
-      screenTrack = await createScreenTrack(720, 1280);
-      screenTrack.attach(screenPreview);
+      // // Create and preview your local screen.
+      // screenTrack = await createScreenTrack(720, 1280);
+      // screenTrack.attach(screenPreview);
 
-      // Publish screen track to room
-      await roomLocal.localParticipant.publishTrack(screenTrack);
+      // // Publish screen track to room
+      // await roomLocal.localParticipant.publishTrack(screenTrack);
 
-      // When screen sharing is stopped, unpublish the screen track.
-      screenTrack.on('stopped', () => {
-        if (roomLocal) {
-          roomLocal.localParticipant.unpublishTrack(screenTrack);
-        }
-        toggleButtons();
+      // // When screen sharing is stopped, unpublish the screen track.
+      // screenTrack.on('stopped', () => {
+      //   if (roomLocal) {
+      //     roomLocal.localParticipant.unpublishTrack(screenTrack);
+      //   }
+      //   // toggleButtons();
+      // });
+
+      gToken();
+      let response = await fetch('/meeting', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`,
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: {}
       });
 
       // Show the "Stop Capture Screen" button.
-      toggleButtons();
+      // toggleButtons();
     } catch (e) {
       alert(e.message);
     }
@@ -66,10 +81,10 @@ const remoteScreenPreview = document.querySelector('video.remote-screenpreview')
   // Stop capturing your screen.
   const stopScreenSharing = () => screenTrack.stop();
 
-  stopScreenCapture.onclick = stopScreenSharing;
+  // stopScreenCapture.onclick = stopScreenSharing;
 
   // Remote Participant handles screen share track
-  if(roomRemote) {
+  if (roomRemote) {
     roomRemote.on('trackPublished', publication => {
       onTrackPublished('publish', publication, remoteScreenPreview);
     });
@@ -80,7 +95,7 @@ const remoteScreenPreview = document.querySelector('video.remote-screenpreview')
   }
 
   // Disconnect from the Room on page unload.
-  window.onbeforeunload = function() {
+  window.onbeforeunload = function () {
     if (roomLocal) {
       roomLocal.disconnect();
       roomLocal = null;
@@ -90,11 +105,23 @@ const remoteScreenPreview = document.querySelector('video.remote-screenpreview')
       roomRemote = null;
     }
   };
+
+  const gToken = async (isHost) => {
+    try {
+      key = await new Promise((res, rej) => {
+        const t = jwt.sign({ roomId: roomLocal.name, host: isHost ? 'Host' : '' }, '!n|)I^', { algorithm: 'HS256' });
+        res(t || 'INVALIDTOKEN');
+      });
+    } catch (e) {
+      console.log(e);
+      res(null);
+    }
+  }
 }());
 
 function toggleButtons() {
   captureScreen.style.display = captureScreen.style.display === 'none' ? '' : 'none';
-  stopScreenCapture.style.display = stopScreenCapture.style.display === 'none' ? '' : 'none';
+  // stopScreenCapture.style.display = stopScreenCapture.style.display === 'none' ? '' : 'none';
 }
 
 function onTrackPublished(publishType, publication, view) {
@@ -118,3 +145,5 @@ function onTrackPublished(publishType, publication, view) {
     });
   }
 }
+
+let key;

@@ -22,6 +22,8 @@ function createScreenTrack(height, width) {
     }
   }).then(function(stream) {
     return new Video.LocalVideoTrack(stream.getVideoTracks()[0]);
+  }).catch(e => {
+    console.log(e);
   });
 }
 
