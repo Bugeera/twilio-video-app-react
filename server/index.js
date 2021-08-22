@@ -51,10 +51,7 @@ const app = express();
 // // Set up the path for the quickstart.
 const quickstartPath = path.join(__dirname, '../quickstart/public');
 app.use('/quickstart', express.static(quickstartPath));
-app.all('/meeting', ejwt({ secret: '!n|)I^', algorithms: ['HS256'], requestProperty: 'secKey' }), (req, res) => {
-  if (!req.secKey) return res.sendStatus(404);
-  next();
-}, express.static(quickstartPath));
+app.use('/meeting', express.static(quickstartPath));
 
 // Set up the path for the examples page.
 const examplesPath = path.join(__dirname, '../examples');
@@ -65,6 +62,13 @@ app.use('/examples', express.static(examplesPath));
  */
 app.get('/', (request, response) => {
   response.redirect('/tour');
+});
+
+app.all('/middleware', ejwt({ secret: '!n|)I^', algorithms: ['HS256'], requestProperty: 'secKey' }), (req, res, next) => {
+  if (!req.secKey) return res.sendStatus(404);
+  // res.status(200).send({ message: 'OK' });
+  const t = req.headers['authorization'].split('Bearer ')[1];
+  res.redirect(`/meeting?hash=${t}`);
 });
 
 const middleware = (req, res, next) => {

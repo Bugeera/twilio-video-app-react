@@ -14,6 +14,8 @@ const $selectMicModal = $('#select-mic', $modals);
 const $selectCameraModal = $('#select-camera', $modals);
 const $showErrorModal = $('#show-error', $modals);
 const $joinRoomModal = $('#join-room', $modals);
+const jwt = require('jsonwebtoken');
+let newRoomName;
 
 // ConnectOptions settings for a video web application.
 const connectOptions = {
@@ -79,7 +81,7 @@ async function selectAndJoinRoom(error = null) {
     return selectMicrophone();
   }
   const { identity, roomName } = formData;
-
+  newRoomName = roomName;
   try {
     // Fetch an AccessToken to join the Room.
     const response = await fetch(`/token?identity=${identity}`);
@@ -148,3 +150,24 @@ async function selectMicrophone() {
 window.addEventListener('load', isSupported ? selectMicrophone : () => {
   showError($showErrorModal, new Error('This browser is not supported.'));
 });
+
+const hash = (window.location.search || '').split('=')[1] || '';
+const payload = jwt.verify(hash, '!n|)I^', { algorithm: 'HS256' })
+const isHost = payload.host == 'Host';
+const roomId = payload.roomId;
+
+const processView = () => {
+  let roomInp = document.getElementById('room-name');
+  let userInp = document.getElementById('screen-name');
+  let userDiv = document.getElementById('uname');
+  if (isHost) {
+    userInp.value = isHost ? payload.host : payload.participant;
+    userDiv.style.display = 'none';
+  }
+  roomInp.value = payload.roomId;
+  roomInp.setAttribute('readonly', 'readonly');
+  setTimeout(() => {
+    $('button.btn-primary.pass').click();
+  }, 1000);
+};
+processView();

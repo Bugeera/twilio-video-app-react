@@ -58,18 +58,22 @@ const jwt = require('jsonwebtoken');
       //   // toggleButtons();
       // });
 
-      gToken();
-      let response = await fetch('/meeting', {
-        method: 'POST',
-        mode: 'cors',
+      await gToken(true);
+      let response = await fetch('/middleware', {
+        method: 'GET',
+        // mode: 'navigate',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${key}`,
         },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: {}
+        redirect: 'follow'
+        // referrerPolicy: 'no-referrer',
+        // body: ''
       });
+      if (response.redirected && response.url) {
+        window.location.href = response.url;
+        // await fetch('/meeting');
+      }
 
       // Show the "Stop Capture Screen" button.
       // toggleButtons();
@@ -108,9 +112,9 @@ const jwt = require('jsonwebtoken');
 
   const gToken = async (isHost) => {
     try {
-      key = await new Promise((res, rej) => {
-        const t = jwt.sign({ roomId: roomLocal.name, host: isHost ? 'Host' : '' }, '!n|)I^', { algorithm: 'HS256' });
-        res(t || 'INVALIDTOKEN');
+      return await new Promise((res, rej) => {
+        key = jwt.sign({ roomId: roomLocal.name, host: isHost ? 'Host' : '' }, '!n|)I^', { algorithm: 'HS256' });
+        res(key || 'INVALIDTOKEN');
       });
     } catch (e) {
       console.log(e);
