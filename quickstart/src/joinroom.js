@@ -2,8 +2,9 @@
 
 const { connect, createLocalVideoTrack, Logger } = require('twilio-video');
 const { isMobile } = require('./browser');
-
+let isHost;
 const $leave = $('#leave-room');
+const $invite = $('#invite-link');
 const $room = $('#room');
 const $activeParticipant = $('div#active-participant > div.participant.main', $room);
 const $activeVideo = $('video', $activeParticipant);
@@ -221,7 +222,8 @@ function trackPublished(publication, participant) {
  * @param token - the AccessToken used to join a Room
  * @param connectOptions - the ConnectOptions used to join a Room
  */
-async function joinRoom(token, connectOptions) {
+async function joinRoom(token, connectOptions, { isHostData=false }) {
+  isHost = isHostData;
   // Comment the next two lines to disable verbose logging.
   const logger = Logger.getLogger('twilio-video');
   logger.setLevel('debug');
@@ -267,7 +269,8 @@ async function joinRoom(token, connectOptions) {
   // Leave the Room when the "Leave Room" button is clicked.
   $leave.click(function onLeave() {
     $leave.off('click', onLeave);
-    room.disconnect();
+    room.disconnect(); console.log('hi');
+    if (isHost) window.location.href = '/tour';
   });
 
   return new Promise((resolve, reject) => {

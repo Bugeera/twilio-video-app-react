@@ -59,12 +59,12 @@ const jwt = require('jsonwebtoken');
       // });
 
       await gToken(true);
-      let response = await fetch('/middleware', {
+      let response = await fetch(`/middleware?hash=${key}`, {
         method: 'GET',
         // mode: 'navigate',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${key}`,
+          // 'Authorization': `Bearer ${key}`,
         },
         redirect: 'follow'
         // referrerPolicy: 'no-referrer',
@@ -113,8 +113,9 @@ const jwt = require('jsonwebtoken');
   const gToken = async (isHost) => {
     try {
       return await new Promise((res, rej) => {
-        key = jwt.sign({ roomId: roomLocal.name, host: isHost ? 'Host' : '' }, '!n|)I^', { algorithm: 'HS256' });
-        res(key || 'INVALIDTOKEN');
+        let hostName = randomString(10);
+        key = jwt.sign({ roomId: null, host: isHost ? hostName : '' }, '!n|)I^', { algorithm: 'HS256' }) || 'INVALIDTOKEN';
+        res(key);
       });
     } catch (e) {
       console.log(e);
@@ -126,6 +127,14 @@ const jwt = require('jsonwebtoken');
 function toggleButtons() {
   captureScreen.style.display = captureScreen.style.display === 'none' ? '' : 'none';
   // stopScreenCapture.style.display = stopScreenCapture.style.display === 'none' ? '' : 'none';
+}
+
+function randomString(digit) {
+  let text = '',
+    base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < digit; i++)
+    text += base64Chars.charAt(Math.floor(Math.random() * base64Chars.length));
+  return text;
 }
 
 function onTrackPublished(publishType, publication, view) {

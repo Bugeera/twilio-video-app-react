@@ -64,11 +64,19 @@ app.get('/', (request, response) => {
   response.redirect('/tour');
 });
 
-app.all('/middleware', ejwt({ secret: '!n|)I^', algorithms: ['HS256'], requestProperty: 'secKey' }), (req, res, next) => {
-  if (!req.secKey) return res.sendStatus(404);
+app.all('/middleware', ejwt({
+  secret: '!n|)I^',
+  algorithms: ['HS256'],
+  requestProperty: 'payload',
+  getToken: req => ((req.query || {}).hash || '')
+}), (req, res, next) => {
+  if (!req.payload) return res.sendStatus(404);
   // res.status(200).send({ message: 'OK' });
-  const t = req.headers['authorization'].split('Bearer ')[1];
-  res.redirect(`/meeting?hash=${t}`);
+  // res.redirect(`/meeting?hash=${t}`);
+  if (req.payload.host && !req.payload.roomId)
+    res.redirect(`/meeting?hash=.${req.payload.host}`);
+  else
+    res.redirect(`/meeting?hash=.${req.payload.host}&room=${req.payload.roomId}`);
 });
 
 const middleware = (req, res, next) => {

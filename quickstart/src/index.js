@@ -1,7 +1,7 @@
 'use strict';
 
 const { isSupported } = require('twilio-video');
-
+const { createScreenTrack } = require('../../examples/screenshare/src/helpers');
 const { isMobile } = require('./browser');
 const joinRoom = require('./joinroom');
 const micLevel = require('./miclevel');
@@ -46,6 +46,7 @@ const connectOptions = {
   preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
 
   // Capture 720p video @ 24 fps.
+  // video: { height: 720, frameRate: 24, width: 1280 }
   video: { height: 720, frameRate: 24, width: 1280 }
 };
 
@@ -99,7 +100,7 @@ async function selectAndJoinRoom(error = null) {
     connectOptions.video.deviceId = { exact: deviceIds.video };
 
     // Join the Room.
-    await joinRoom(token, connectOptions);
+    await joinRoom(token, connectOptions, { isHostData : isHost });
 
     // After the video session, display the room selection modal.
     return selectAndJoinRoom();
@@ -151,23 +152,70 @@ window.addEventListener('load', isSupported ? selectMicrophone : () => {
   showError($showErrorModal, new Error('This browser is not supported.'));
 });
 
-const hash = (window.location.search || '').split('=')[1] || '';
-const payload = jwt.verify(hash, '!n|)I^', { algorithm: 'HS256' })
-const isHost = payload.host == 'Host';
-const roomId = payload.roomId;
+const hash = getQueryVariable('hash');
+const vals = hash.split('.'), hostParam = vals.pop();
+const isHost = hostParam.length == 10 && !vals[0];
+let payload, newRoomId;
+if (isHost) {
+  newRoomId = randomString(16);
+  processView(true, newRoomId);
+} else {
+  if (vals[0]) {
+    let tkn = vals.join('.');
+    payload = jwt.verify(tkn, '!n|)I^', { algorithm: 'HS256' });
+    processView(false, payload.roomId);
+  }
+}
 
-const processView = () => {
+function getQueryVariable(variable) {
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=");
+    if (pair[0] == variable) { return pair[1]; }
+  }
+  return (false);
+}
+
+function processView(isHost, roomId = randomString(16)) {
   let roomInp = document.getElementById('room-name');
   let userInp = document.getElementById('screen-name');
   let userDiv = document.getElementById('uname');
   if (isHost) {
-    userInp.value = isHost ? payload.host : payload.participant;
+    userInp.value = hostParam;
     userDiv.style.display = 'none';
+  } else {
+    userInp.value = '';
   }
-  roomInp.value = payload.roomId;
+  roomInp.value = roomId;
   roomInp.setAttribute('readonly', 'readonly');
-  setTimeout(() => {
-    $('button.btn-primary.pass').click();
-  }, 1000);
+  $(document).ready((p) => {
+    if (isHost) $('button.btn-primary.pass').click();
+    else {
+      document.getElementById('invite-link').style.display = 'none';
+    }
+  });
+  // setTimeout(() => {
+
+  // }, 2000);
 };
-processView();
+
+$('#invite-link').on('click', () => {
+  let token = jwt.sign({ roomId: newRoomId, host: hostParam }, '!n|)I^', { algorithm: 'HS256' })
+    || 'INVALIDTOKEN';
+  token = `${token}.${hostParam}`;
+  let link = `${window.location.origin}${window.location.pathname.replace(/\/$/, '')}?hash=${token}`;
+  navigator.clipboard.writeText(link);
+});
+
+function randomString(digit) {
+  let text = '',
+    base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < digit; i++)
+    text += base64Chars.charAt(Math.floor(Math.random() * base64Chars.length));
+  return text;
+}
+
+function whoAmI() {
+  return isHost;
+}
