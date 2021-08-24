@@ -104,9 +104,9 @@ app.get('/token', function (request, response) {
   // Create an access token which we will sign and return to the client,
   // containing the grant we just created.
   const token = new AccessToken(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_API_KEY,
-    process.env.TWILIO_API_SECRET,
+    process.env.TWILIO_ACCOUNT_SID || 'ACae607e3502fd3e5c9863a81a6cee287d',
+    process.env.TWILIO_API_KEY || 'SKec95353ef6bf793a21eacffeb45d13c0',
+    process.env.TWILIO_API_SECRET || 'jTcMJGXyfK7yZgiFCwhjtXLr6wGHvbSr',
     { ttl: MAX_ALLOWED_SESSION_DURATION }
   );
 
