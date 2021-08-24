@@ -18,8 +18,8 @@ const ejwt = require('express-jwt');
 const fs = require('fs');
 
 const options = {
-  key: fs.readFileSync(path.resolve('./certs/3d.key')),
-  cert: fs.readFileSync(path.resolve('./certs/3d.crt'))
+  key: fs.readFileSync(path.resolve('./server/certs/privkey.pem')),
+  cert: fs.readFileSync(path.resolve('./server/certs/fullchain.pem'))
 };
 
 const VideoGrant = AccessToken.VideoGrant;
