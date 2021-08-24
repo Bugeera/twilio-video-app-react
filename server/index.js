@@ -10,10 +10,17 @@
 require('dotenv').load();
 
 const express = require('express');
-const http = require('http');
+const http = require('http'),
+  https = require('https');
 const path = require('path');
 const { jwt: { AccessToken } } = require('twilio');
 const ejwt = require('express-jwt');
+const fs = require('fs');
+
+const options = {
+  key: fs.readFileSync(path.resolve('./certs/3d.key')),
+  cert: fs.readFileSync(path.resolve('./certs/3d.crt'))
+};
 
 const VideoGrant = AccessToken.VideoGrant;
 
@@ -21,7 +28,10 @@ const VideoGrant = AccessToken.VideoGrant;
 const MAX_ALLOWED_SESSION_DURATION = 14400;
 
 // Create Express webapp.
+const PORT = process.env.PORT ?? 443;
 const app = express();
+app.use(express.json());
+
 
 // Set up the paths for the examples.
 [
@@ -112,8 +122,21 @@ app.get('/token', function (request, response) {
 });
 
 // Create http server and run it.
-const server = http.createServer(app);
-const port = process.env.PORT || 3000;
-server.listen(port, function () {
-  console.log('Express server running on *:' + port);
+// const server = http.createServer(app);
+// const port = process.env.PORT || 3000;
+// server.listen(port, function () {
+//   console.log('Express server running on *:' + port);
+// });
+
+
+const httpsServer = https.createServer(options, app).listen(PORT, () => {
+  console.log("Express server is listening on port: " + PORT);
 });
+const httpServer = http.createServer({}, (req, res) => {
+  res.writeHead(301, { "Location": `https://${(req.headers || {}).host.split(':')[0]}:${PORT}` + req.url });
+  res.end();
+}).listen(80);
+
+module.exports = { httpsServer, httpServer, app };
+
+
