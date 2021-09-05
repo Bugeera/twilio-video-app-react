@@ -25,7 +25,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.env
+# .env
 .vscode
 
 test-reports
@@ -75,15 +75,15 @@ jspm_packages
 .idea
 
 # Twilio credentials file
-.env
+# .env
 
 # Misc
 .DS_Store
 package-lock.json
 
 # The generated index.js
-**/public/index.js
+# **/public/index.js
 
 # The generated helpers.js
-**/public/helpers.js
-**/public/helpers*.js
+# **/public/helpers.js
+# **/public/helpers*.js

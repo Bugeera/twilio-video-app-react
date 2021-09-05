@@ -40,6 +40,43 @@
         <!-- </div> -->
       <!-- </div> -->
     </div>
+        <div class="modal fade" id="join-room" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="join-room-label" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="join-room-label">Video Chat</h5>
+              </div>
+              <div class="modal-body">
+                <div class="form-group" id="rname">
+                  <label id="room-name-label" for="room-name">Room Name</label>
+                  <input id="room-name" class="form-control" type="text" />
+                </div>
+                <div class="form-group" id="uname">
+                  <label id="screen-name-label" for="screen-name">User Name</label>
+                  <input id="screen-name" class="form-control" type="text" />
+                </div>
+                <div class="alert alert-warning" role="alert">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-dark">Change Microphone and Camera</button>
+                <button type="button" class="btn btn-primary pass">Join</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="show-error" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="show-error-label" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="show-error-label">Error</h5>
+              </div>
+              <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                </div>
+            </div>
+          </div>
+        </div>
   </div>
 </div>
 <script src="index.js"></script>

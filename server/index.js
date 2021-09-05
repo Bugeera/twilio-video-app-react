@@ -28,7 +28,7 @@ const VideoGrant = AccessToken.VideoGrant;
 const MAX_ALLOWED_SESSION_DURATION = 14400;
 
 // Create Express webapp.
-const PORT = process.env.PORT ?? 443;
+const PORT = process.env.PORT ?? 3000;
 const app = express();
 app.use(express.json());
 
@@ -83,10 +83,13 @@ app.all('/middleware', ejwt({
   if (!req.payload) return res.sendStatus(404);
   // res.status(200).send({ message: 'OK' });
   // res.redirect(`/meeting?hash=${t}`);
-  if (req.payload.host && !req.payload.roomId)
+  if (req.payload.host && !req.payload.roomId) {
     res.redirect(`/meeting?hash=.${req.payload.host}`);
-  else
+    // res.redirect(`/screenshare?hash=.${req.payload.host}`);
+  } else {
     res.redirect(`/meeting?hash=.${req.payload.host}&room=${req.payload.roomId}`);
+    // res.redirect(`/screenshare?hash=.${req.payload.host}&room=${req.payload.roomId}`);
+  }
 });
 
 const middleware = (req, res, next) => {
@@ -135,7 +138,7 @@ const httpsServer = https.createServer(options, app).listen(PORT, () => {
 const httpServer = http.createServer({}, (req, res) => {
   res.writeHead(301, { "Location": `https://${(req.headers || {}).host.split(':')[0]}:${PORT}` + req.url });
   res.end();
-}).listen(80);
+}).listen(8080);
 
 module.exports = { httpsServer, httpServer, app };
 

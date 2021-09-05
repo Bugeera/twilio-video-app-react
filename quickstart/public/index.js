@@ -63672,20 +63672,24 @@ function whoAmI() {
 
 const { connect, createLocalVideoTrack, Logger } = require('twilio-video');
 const { isMobile } = require('./browser');
-let isHost;
+let isHost, isScreenTrackOn = false;
 const $leave = $('#leave-room');
 const $invite = $('#invite-link');
 const $room = $('#room');
 const $activeParticipant = $('div#active-participant > div.participant.main', $room);
 const $activeVideo = $('video', $activeParticipant);
 const $participants = $('div#participants', $room);
-
+const screenHelper = require('../../examples/screenshare/src/helpers');
 // The current active Participant in the Room.
 let activeParticipant = null;
 
 // Whether the user has selected the active Participant by clicking on
 // one of the video thumbnails.
 let isActiveParticipantPinned = false;
+
+let screenTrack,
+  screenPreview = document.querySelector('video#screenpreview'),
+  stopScreenCapture = document.querySelector('button#stopscreencapture');
 
 /**
  * Set the active Participant's video.
@@ -63892,7 +63896,7 @@ function trackPublished(publication, participant) {
  * @param token - the AccessToken used to join a Room
  * @param connectOptions - the ConnectOptions used to join a Room
  */
-async function joinRoom(token, connectOptions, { isHostData=false }) {
+async function joinRoom(token, connectOptions, { isHostData = false }) {
   isHost = isHostData;
   // Comment the next two lines to disable verbose logging.
   const logger = Logger.getLogger('twilio-video');
@@ -63903,6 +63907,33 @@ async function joinRoom(token, connectOptions, { isHostData=false }) {
 
   // Save the LocalVideoTrack.
   let localVideoTrack = Array.from(room.localParticipant.videoTracks.values())[0].track;
+
+
+
+
+
+  debugger;
+
+  if (isHost && !isScreenTrackOn) {
+    screenTrack = await screenHelper.createScreenTrack(720, 1280);
+    screenTrack.attach(screenPreview);
+
+    // Publish screen track to room
+    await room.localParticipant.publishTrack(screenTrack);
+
+    // When screen sharing is stopped, unpublish the screen track.
+    screenTrack.on('stopped', async () => {
+      if (room) {
+        await room.localParticipant.unpublishTrack(screenTrack);
+        await room.localParticipant.publishTrack(localVideoTrack);
+        isScreenTrackOn = false;
+      }
+    });
+    isScreenTrackOn = true;
+  }
+
+
+
 
   // Make the Room available in the JavaScript console for debugging.
   window.room = room;
@@ -64013,7 +64044,7 @@ async function joinRoom(token, connectOptions, { isHostData=false }) {
 
 module.exports = joinRoom;
 
-},{"./browser":406,"twilio-video":264}],409:[function(require,module,exports){
+},{"../../examples/screenshare/src/helpers":1,"./browser":406,"twilio-video":264}],409:[function(require,module,exports){
 'use strict';
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
